@@ -1,0 +1,12 @@
+{
+    "model": {
+        "checkpoint": "checkpoints/t01/best_model.pth",
+        "input_width": 224,
+        "input_height": 224
+    },
+
+    "export": {
+        "batch_size": 32,
+        "output_path": "onnx/t01"
+    }
+}

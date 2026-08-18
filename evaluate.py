@@ -203,7 +203,8 @@ if __name__ == "__main__":
     ### MODEL ###
 
     checkpoint = torch.load(config["model"]["checkpoint"],
-                            map_location=device)
+                            map_location=device,
+                            weights_only=True)
 
     model = Detectdoor().to(device)
 
