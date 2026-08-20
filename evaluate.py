@@ -18,7 +18,7 @@ from sklearn.metrics import ConfusionMatrixDisplay
 import numpy as np
 import pandas as pd
 
-from datasets.door_dataset import DoorDataset
+from datasets.simple_dataset import SimpleDataset
 from datasets.utils import get_images_paths_and_labels
 
 from models.detectdoor import Detectdoor
@@ -190,7 +190,7 @@ if __name__ == "__main__":
     transform = transforms.Compose([transforms.Resize((224, 224)),
                                     transforms.ToTensor()])
 
-    test_dataset = DoorDataset(test_img_paths, test_labels, transform)
+    test_dataset = SimpleDataset(test_img_paths, test_labels, transform)
 
     ### DATALOADER ###
 

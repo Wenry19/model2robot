@@ -1,4 +1,9 @@
+backports.strenum==1.3.1
 contourpy==1.3.2
+cuda-bindings==12.9.7
+cuda-core==1.0.1
+cuda-pathfinder==1.6.1
+cuda-python==12.9.7
 cycler==0.12.1
 filelock==3.32.3
 fonttools==4.63.0
@@ -36,6 +41,9 @@ scikit-learn==1.7.2
 scipy==1.15.3
 six==1.17.0
 sympy==1.13.1
+tensorrt_cu12==11.2.1.2
+tensorrt_cu12_bindings==11.2.1.2
+tensorrt_cu12_libs==11.2.1.2
 threadpoolctl==3.6.0
 torch==2.5.1+cu121
 torchvision==0.20.1+cu121

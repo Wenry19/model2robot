@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 
 from models.detectdoor import Detectdoor
-from datasets.door_dataset import DoorDataset
+from datasets.simple_dataset import SimpleDataset
 from datasets.utils import get_images_paths_and_labels
 import json
 import csv
@@ -251,8 +251,8 @@ if __name__ == "__main__":
     transform = transforms.Compose([transforms.Resize((224, 224)),
                                     transforms.ToTensor()])
 
-    train_dataset = DoorDataset(train_img_paths, train_labels, transform)
-    val_dataset = DoorDataset(val_img_paths, val_labels, transform)
+    train_dataset = SimpleDataset(train_img_paths, train_labels, transform)
+    val_dataset = SimpleDataset(val_img_paths, val_labels, transform)
     # image, label = train_dataset[0]
 
     ### DATALOADER ###

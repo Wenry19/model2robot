@@ -218,7 +218,5 @@ __marimo__/
 .streamlit/secrets.toml
 
 # From project
-checkpoints
 data
-test_results
-onnx
+*_output

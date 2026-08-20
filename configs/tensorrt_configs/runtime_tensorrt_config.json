@@ -1,0 +1,27 @@
+{
+    "dataset": {
+        "test_path": "data/Door-Classification/OriginalSize/RGB/test",
+        "num_classes": 3,
+        "class_names": [
+            "Closed",
+            "Open",
+            "Semi"
+        ]
+    },
+
+    "model": {
+        "engine": "tensorrt_output/builder/t01/best_model.engine",
+        "input_width": 224,
+        "input_height": 224
+    },
+
+    "evaluation": {
+        "batch_size": 32,
+        "num_workers": 4,
+        "pin_memory": true
+    },
+
+    "results": {
+        "output_path": "tensorrt_output/runtime/t01"
+    }
+}
