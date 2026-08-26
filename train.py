@@ -1,22 +1,22 @@
 
-import os
 import sys
+import os
 
 import random
 import numpy as np
 import matplotlib.pyplot as plt
+import csv
+from datetime import datetime
 
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from torchvision import transforms
 
+import utils
 from models.detectdoor import Detectdoor
 from datasets.simple_dataset import SimpleDataset
 from datasets.utils import get_images_paths_and_labels
-import json
-import csv
-from datetime import datetime
 
 LOSS = {
     "CrossEntropyLoss": nn.CrossEntropyLoss,
@@ -29,7 +29,6 @@ OPTIMIZER = {
     "SGD": torch.optim.SGD,
     "AdamW": torch.optim.AdamW,
 }
-
 
 def set_seed(seed):
     random.seed(seed)
@@ -191,64 +190,44 @@ def save_train_metrics(output_path, timestamps, train_losses, val_losses, val_ac
     plt.savefig(os.path.join(output_path, "accuracy_curve.png"), bbox_inches="tight")
     plt.close()
 
-def save_train_config(config):
-    output_train_config_path = os.path.join(config["checkpoint"]["output_path"],
-                                            "train_config.json")
-    with open(output_train_config_path, "w") as f:
-        json.dump(config, f, indent=4)
-
 if __name__ == "__main__":
 
-    ### FIND DEVICE ###
-
-    device = torch.device(
-    "cuda" if torch.cuda.is_available() else "cpu")
-    print(device)
-
-    ### READ CONFIG FILE ###
-
+    ### GET READY ###
+    device = utils.find_device()
     config_path = sys.argv[1]
+    config = utils.read_config_file(config_path)
+    utils.create_output_dir(config["output_path"])
 
-    with open(config_path, "r") as file:
-        config = json.load(file)
-
-    ### PREPARE OUTPUT DIRECTORY ###
-    if not os.path.exists(config["checkpoint"]["output_path"]):
-        os.makedirs(config["checkpoint"]["output_path"])
-    else:
-        print("Output path already exists:", config["checkpoint"]["output_path"])
-        sys.exit(1)
-
-    ### SAVE READ CONFIG FOR REPRODUCIBILITY ###
-    save_train_config(config)
-
-    ### SET SEED FOR REPRODUCIBILITY ###
+    ### FOR REPRODUCIBILITY ###
+    utils.save_config(config)
     set_seed(config["seed"])
 
     ### MODEL ###
-
     model = Detectdoor()
     model.to(device)
 
     ### LOSS FUNCTION ###
-
     loss_func = LOSS[config["training"]["loss"]]()
     # expects (batch_size, num_classes) which are the predictions (one-hot vectors)
     # and (batch_size) which are the labels (integers)
 
     ### OPTIMIZER ###
-    
-    optimizer = OPTIMIZER[config["training"]["optimizer"]](model.parameters(), lr=1e-3)
+    optimizer = OPTIMIZER[config["training"]["optimizer"]](model.parameters(),
+                                                           lr=config["training"]["learning_rate"])
 
     ### DATASETS ###
 
     target_path = config["dataset"]["train_path"]
-    train_img_paths, train_labels = get_images_paths_and_labels(target_path, config["dataset"]["class_names"])
+    train_img_paths, train_labels = get_images_paths_and_labels(target_path,
+                                                                config["dataset"]["class_names"])
 
     target_path = config["dataset"]["val_path"]
-    val_img_paths, val_labels = get_images_paths_and_labels(target_path, config["dataset"]["class_names"])
+    val_img_paths, val_labels = get_images_paths_and_labels(target_path,
+                                                            config["dataset"]["class_names"])
 
-    transform = transforms.Compose([transforms.Resize((224, 224)),
+    input_width = config["model"]["input_width"]
+    input_height = config["model"]["input_height"]
+    transform = transforms.Compose([transforms.Resize((input_height, input_width)),
                                     transforms.ToTensor()])
 
     train_dataset = SimpleDataset(train_img_paths, train_labels, transform)
@@ -270,7 +249,7 @@ if __name__ == "__main__":
                                 num_workers=config["dataloader"]["num_workers"],
                                 pin_memory=config["dataloader"]["pin_memory"])
 
-    ### START TRAINING ###
+    ### TRAINING LOOP ###
 
     train_losses = []
     val_losses = []
@@ -295,7 +274,7 @@ if __name__ == "__main__":
         val_accuracies.append(val_acc)
         timestamps.append(timestamp)
         
-        best_val_loss = save_checkpoint(config["checkpoint"]["output_path"],
+        best_val_loss = save_checkpoint(config["output_path"],
                                         best_val_loss,
                                         val_loss,
                                         val_acc,
@@ -303,7 +282,7 @@ if __name__ == "__main__":
                                         model,
                                         optimizer)
 
-    save_train_metrics(config["checkpoint"]["output_path"],
+    save_train_metrics(config["output_path"],
                        timestamps,
                        train_losses,
                        val_losses,

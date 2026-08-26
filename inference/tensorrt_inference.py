@@ -1,17 +1,27 @@
 
 import numpy as np
 
-from cuda.bindings import runtime as cudart
+from inference.inference import Inference
 
-class TensorRTInference:
+from cuda.bindings import runtime as cudart
+import tensorrt as trt
+
+class TensorRTInference(Inference):
 
     """Manages TensorRT inference for fixed batch sizes, including buffers and CUDA resources."""
 
-    def __init__(self, config, engine):
+    def __init__(self, model_path, batch_size, input_height, input_width):
 
-        self.config = config
+        self.batch_size = batch_size
+        self.input_height = input_height
+        self.input_width = input_width
 
-        self.engine = engine
+        self.logger = trt.Logger(trt.Logger.WARNING)
+        self.runtime = trt.Runtime(self.logger)
+
+        with open(model_path, "rb") as f:
+            model_data = f.read()
+        self.engine = self.runtime.deserialize_cuda_engine(model_data)
 
         # Create execution context
         self.context = self.engine.create_execution_context()
@@ -21,10 +31,10 @@ class TensorRTInference:
         self.output_name = self.engine.get_tensor_name(1)
 
         # Fixed input shape
-        self.input_shape = (config["evaluation"]["batch_size"],
+        self.input_shape = (self.batch_size,
                             3,
-                            config["model"]["input_height"],
-                            config["model"]["input_width"])
+                            self.input_height,
+                            self.input_width)
         self.input_nbytes = (np.prod(self.input_shape) * np.dtype(np.float32).itemsize)
 
         # Set input shape and get output shape
@@ -47,11 +57,11 @@ class TensorRTInference:
 
     def run(self, input_array):
 
-        # Sanity checks and padding the batch if necessary
-        original_batch_size = self._batch_padding(input_array)
-
         # Ensures float32 and contiguous memory, copies only if necessary
         host_input = np.ascontiguousarray(input_array, dtype=np.float32)
+
+        # Sanity checks and padding the batch if necessary
+        original_batch_size = self._batch_padding(host_input)
 
         # Host -> Device
         err, = cudart.cudaMemcpyAsync(
@@ -79,7 +89,7 @@ class TensorRTInference:
     def _batch_padding(self, input_array):
 
         original_batch_size = input_array.shape[0]
-        inference_batch_size = self.config["evaluation"]["batch_size"]
+        inference_batch_size = self.batch_size
 
         if original_batch_size > inference_batch_size:
             raise ValueError(

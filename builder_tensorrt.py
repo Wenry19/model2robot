@@ -4,6 +4,8 @@ import os
 import json
 import tensorrt as trt
 
+import utils
+
 def build_engine(onnx_path: str, engine_path: str):
     """Build a strongly typed TensorRT engine from an ONNX file and save it."""
 
@@ -34,34 +36,19 @@ def build_engine(onnx_path: str, engine_path: str):
     with open(engine_path, "wb") as f:
         f.write(serialized)
 
-def save_build_config(config):
-    output_build_config_path = os.path.join(config["build"]["output_path"],
-                                            "builder_tensorrt_config.json")
-    with open(output_build_config_path, "w") as f:
-        json.dump(config, f, indent=4)
-
 if __name__ == "__main__":
 
-    ### READ CONFIG FILE ###
-    
+    ### GET READY ###
     config_path = sys.argv[1]
+    config = utils.read_config_file(config_path)
+    utils.create_output_dir(config["output_path"])
 
-    with open(config_path, "r") as file:
-        config = json.load(file)
-
-    ### PREPARE OUTPUT DIRECTORY ###
-    if not os.path.exists(config["build"]["output_path"]):
-        os.makedirs(config["build"]["output_path"])
-    else:
-        print("Output path already exists:", config["build"]["output_path"])
-        sys.exit(1)
-
-    ### SAVE READ CONFIG FOR REPRODUCIBILITY ###
-    save_build_config(config)
+    ### FOR REPRODUCIBILITY ###
+    utils.save_config(config)
 
     ### BUILD TENSORRT ENGINE USING PYTHON API ###
 
-    onnx_path = config["model"]["onnx_path"]
-    engine_path = os.path.join(config["build"]["output_path"],
+    onnx_path = config["model"]["path"]
+    engine_path = os.path.join(config["output_path"],
                                os.path.basename(onnx_path).split(".")[0] + ".engine")
     build_engine(onnx_path, engine_path)

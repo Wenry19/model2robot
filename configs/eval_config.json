@@ -1,7 +1,6 @@
 {
     "dataset": {
         "test_path": "data/Door-Classification/OriginalSize/RGB/test",
-        "num_classes": 3,
         "class_names": [
             "Closed",
             "Open",
@@ -10,18 +9,19 @@
     },
 
     "model": {
-        "checkpoint": "checkpoints/t01/best_model.pth",
+        "path": "tensorrt_output/t02/best_model.engine",
         "input_width": 224,
         "input_height": 224
     },
 
     "evaluation": {
-        "batch_size": 32,
+        "batch_size": 32
+    },
+
+    "dataloader": {
         "num_workers": 4,
         "pin_memory": true
     },
-
-    "results": {
-        "output_path": "test_results/t01"
-    }
+    
+    "output_path": "eval_output/tensorrt/t02"
 }

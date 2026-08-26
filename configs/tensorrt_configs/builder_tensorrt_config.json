@@ -1,8 +1,0 @@
-{
-    "model": {
-        "onnx_path": "onnx/t01/best_model.onnx"
-    },
-    "build": {
-        "output_path": "tensorrt/t01"
-    }
-}

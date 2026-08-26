@@ -1,37 +1,22 @@
 
 import sys
 import os
-import json
 
 import torch
 import onnx
 
+import utils
 from models.detectdoor import Detectdoor
-
-def save_export_config(config):
-    output_export_config_path = os.path.join(config["export"]["output_path"],
-                                             "export_to_onnx_config.json")
-    with open(output_export_config_path, "w") as f:
-        json.dump(config, f, indent=4)
 
 if __name__ == "__main__":
 
-    ### READ CONFIG FILE ###
-    
+    ### GET READY ###
     config_path = sys.argv[1]
+    config = utils.read_config_file(config_path)
+    utils.create_output_dir(config["output_path"])
 
-    with open(config_path, "r") as file:
-        config = json.load(file)
-
-    ### PREPARE OUTPUT DIRECTORY ###
-    if not os.path.exists(config["export"]["output_path"]):
-        os.makedirs(config["export"]["output_path"])
-    else:
-        print("Output path already exists:", config["export"]["output_path"])
-        sys.exit(1)
-
-    ### SAVE READ CONFIG FOR REPRODUCIBILITY ###
-    save_export_config(config)
+    ### FOR REPRODUCIBILITY ###
+    utils.save_config(config)
 
     ### DUMMY DATA ###
     # We need a batch of data to save our ONNX file from PyTorch. We will use a dummy batch.
@@ -43,7 +28,7 @@ if __name__ == "__main__":
                             config["model"]["input_width"])
 
     ### LOAD PYTORCH MODEL TO BE EXPORTED ###
-    checkpoint = torch.load(config["model"]["checkpoint"],
+    checkpoint = torch.load(config["model"]["path"],
                             map_location="cpu",
                             weights_only=True)
     model = Detectdoor()
@@ -51,8 +36,8 @@ if __name__ == "__main__":
     model.eval() # IMPORTANT!
 
     ### EXPORT TO ONNX ###
-    onnx_file_name = os.path.basename(config["model"]["checkpoint"]).split(".")[0] + ".onnx"
-    onnx_output_path = os.path.join(config["export"]["output_path"], onnx_file_name)
+    onnx_file_name = os.path.basename(config["model"]["path"]).split(".")[0] + ".onnx"
+    onnx_output_path = os.path.join(config["output_path"], onnx_file_name)
     torch.onnx.export(model,
                       dummy_input,
                       onnx_output_path,

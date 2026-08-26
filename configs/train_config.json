@@ -2,7 +2,6 @@
     "dataset": {
         "train_path": "data/Door-Classification/OriginalSize/RGB/train",
         "val_path": "data/Door-Classification/OriginalSize/RGB/val",
-        "num_classes": 3,
         "class_names": [
             "Closed",
             "Open",
@@ -10,30 +9,26 @@
         ]
     },
 
+    "model": {
+        "input_width": 224,
+        "input_height": 224
+    },
+
     "training": {
-        "epochs": 50,
+        "epochs": 10,
         "batch_size": 32,
         "learning_rate": 0.00005,
         "optimizer": "Adam",
         "loss": "CrossEntropyLoss"
     },
 
-    "model": {
-        "input_width": 224,
-        "input_height": 224
-    },
-
     "dataloader": {
         "shuffle": true,
         "num_workers": 4,
         "pin_memory": true,
-        "drop_last": true
+        "drop_last": false
     },
 
-    "checkpoint": {
-        "output_path": "checkpoints/t01",
-        "save_best_only": true
-    },
-
-    "seed": 42
+    "seed": 42,
+    "output_path": "pytorch_output/t02"
 }
