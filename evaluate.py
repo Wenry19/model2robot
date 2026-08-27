@@ -6,7 +6,6 @@ from torch.utils.data import DataLoader
 
 import utils
 
-from datasets.simple_dataset import SimpleDataset
 from datasets.utils import get_images_paths_and_labels
 
 from inference.pytorch_inference import PyTorchInference
@@ -34,10 +33,18 @@ if __name__ == "__main__":
 
     input_width = config["model"]["input_width"]
     input_height = config["model"]["input_height"]
-    transform = transforms.Compose([transforms.Resize((input_height, input_width)),
-                                        transforms.ToTensor()])
 
-    test_dataset = SimpleDataset(test_img_paths, test_labels, transform)
+    transform_config = config["dataset"]["transform"]
+    transform = utils.import_function(transform_config["module"],
+                                      transform_config["function"],
+                                      **transform_config.get("args", {}))
+
+    test_dataset = utils.instantiate_class(config["dataset"]["module"],
+                                           config["dataset"]["class"],
+                                           img_paths=test_img_paths,
+                                           labels=test_labels,
+                                           transform=transform,
+                                           **config["dataset"].get("args", {}))
 
     ### DATALOADER ###
     test_dataloader = DataLoader(test_dataset,

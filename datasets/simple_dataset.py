@@ -5,8 +5,8 @@ from torch.utils.data import Dataset
 
 class SimpleDataset(Dataset):
 
-    def __init__(self, image_paths, labels, transform=None):
-        self.image_paths = image_paths
+    def __init__(self, img_paths, labels, transform=None):
+        self.image_paths = img_paths
         self.labels = labels
         self.transform = transform
 

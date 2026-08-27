@@ -1,5 +1,16 @@
 {
     "dataset": {
+        "module": "datasets.simple_dataset",
+        "class": "SimpleDataset",
+        "args": {},
+        "transform": {
+            "module": "datasets.transforms",
+            "function": "get_default_transform",
+            "args": {
+                "input_height": 224,
+                "input_width": 224
+            }
+        },
         "test_path": "data/Door-Classification/OriginalSize/RGB/test",
         "class_names": [
             "Closed",

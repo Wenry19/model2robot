@@ -35,3 +35,10 @@ def instantiate_class(module_name, class_name, *args, **kwargs):
     cls = getattr(module, class_name)
 
     return cls(*args, **kwargs)
+
+def import_function(module_name, function_name, **kwargs):
+
+    module = importlib.import_module(module_name)
+    function = getattr(module, function_name)
+
+    return function(**kwargs)

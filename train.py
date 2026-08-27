@@ -7,7 +7,6 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 
 import utils
-from datasets.simple_dataset import SimpleDataset
 from datasets.utils import get_images_paths_and_labels
 
 from training.trainer import Trainer
@@ -60,11 +59,28 @@ if __name__ == "__main__":
 
     input_width = config["model"]["input_width"]
     input_height = config["model"]["input_height"]
-    transform = transforms.Compose([transforms.Resize((input_height, input_width)),
-                                    transforms.ToTensor()])
 
-    train_dataset = SimpleDataset(train_img_paths, train_labels, transform)
-    val_dataset = SimpleDataset(val_img_paths, val_labels, transform)
+    train_transform_config = config["dataset"]["train_transform"]
+    val_transform_config = config["dataset"]["val_transform"]
+    train_transform = utils.import_function(train_transform_config["module"],
+                                            train_transform_config["function"],
+                                            **train_transform_config.get("args", {}))
+    val_transform = utils.import_function(val_transform_config["module"],
+                                          val_transform_config["function"],
+                                          **val_transform_config.get("args", {}))
+
+    train_dataset = utils.instantiate_class(config["dataset"]["module"],
+                                            config["dataset"]["class"],
+                                            img_paths=train_img_paths,
+                                            labels=train_labels,
+                                            transform=train_transform,
+                                            **config["dataset"].get("args", {}))
+    val_dataset = utils.instantiate_class(config["dataset"]["module"],
+                                          config["dataset"]["class"],
+                                          img_paths=val_img_paths,
+                                          labels=val_labels,
+                                          transform=val_transform,
+                                          **config["dataset"].get("args", {}))
     # image, label = train_dataset[0]
 
     ### DATALOADER ###
