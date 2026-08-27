@@ -10,6 +10,8 @@
     },
 
     "model": {
+        "module": "models.detectdoor",
+        "class": "Detectdoor",
         "input_width": 224,
         "input_height": 224
     },
@@ -30,5 +32,5 @@
     },
 
     "seed": 42,
-    "output_path": "pytorch_output/t02"
+    "output_path": "output/train/t03"
 }

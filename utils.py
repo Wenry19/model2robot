@@ -3,6 +3,7 @@ import sys
 import json
 import torch
 import os
+import importlib
 
 def find_device():
     device = torch.device(
@@ -27,3 +28,10 @@ def save_config(config):
                                       "config.json")
     with open(output_config_path, "w") as f:
         json.dump(config, f, indent=4)
+
+def instantiate_class(module_name, class_name, *args, **kwargs):
+
+    module = importlib.import_module(module_name)
+    cls = getattr(module, class_name)
+
+    return cls(*args, **kwargs)

@@ -6,7 +6,6 @@ import torch
 import onnx
 
 import utils
-from models.detectdoor import Detectdoor
 
 if __name__ == "__main__":
 
@@ -31,7 +30,8 @@ if __name__ == "__main__":
     checkpoint = torch.load(config["model"]["path"],
                             map_location="cpu",
                             weights_only=True)
-    model = Detectdoor()
+    model = utils.instantiate_class(config["model"]["module"],
+                                    config["model"]["class"])
     model.load_state_dict(checkpoint["model_state_dict"])
     model.eval() # IMPORTANT!
 

@@ -1,7 +1,7 @@
 {
     "model": {
-        "path": "onnx_output/t02/best_model.onnx"
+        "path": "output/onnx/t03/best_model.onnx"
     },
 
-    "output_path": "tensorrt_output/t02"
+    "output_path": "output/tensorrt/t03"
 }

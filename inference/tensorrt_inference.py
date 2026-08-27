@@ -1,5 +1,6 @@
 
 import numpy as np
+import torch
 
 from inference.inference import Inference
 
@@ -83,6 +84,9 @@ class TensorRTInference(Inference):
 
         # Keep only real samples
         outputs = self.host_output[:original_batch_size]
+
+        # Convert TensorRT NumPy output to PyTorch tensor
+        outputs = torch.from_numpy(outputs)
     
         return outputs
 

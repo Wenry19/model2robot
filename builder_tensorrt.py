@@ -1,7 +1,6 @@
 
 import sys
 import os
-import json
 import tensorrt as trt
 
 import utils
