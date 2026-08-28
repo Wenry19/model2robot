@@ -4,7 +4,6 @@ import sys
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
-from torchvision import transforms
 
 import utils
 from datasets.utils import get_images_paths_and_labels

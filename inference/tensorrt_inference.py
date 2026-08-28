@@ -62,7 +62,7 @@ class TensorRTInference(Inference):
         host_input = np.ascontiguousarray(input_array, dtype=np.float32)
 
         # Sanity checks and padding the batch if necessary
-        original_batch_size = self._batch_padding(host_input)
+        self.original_batch_size = self._batch_padding(host_input)
 
         # Host -> Device
         err, = cudart.cudaMemcpyAsync(
@@ -72,23 +72,6 @@ class TensorRTInference(Inference):
 
         # TensorRT inference
         self.context.execute_async_v3(self.stream)
-
-        # Device -> Host
-        err, = cudart.cudaMemcpyAsync(
-            self.host_output.ctypes.data, self.d_output, self.host_output.nbytes,
-            cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, self.stream,
-        ); self._check(err)
-
-        # Wait until all operations in the stream have completed
-        err, = cudart.cudaStreamSynchronize(self.stream); self._check(err)
-
-        # Keep only real samples
-        outputs = self.host_output[:original_batch_size]
-
-        # Convert TensorRT NumPy output to PyTorch tensor
-        outputs = torch.from_numpy(outputs)
-    
-        return outputs
 
     def _batch_padding(self, input_array):
 
@@ -117,6 +100,30 @@ class TensorRTInference(Inference):
     def _check(self, err):
         if err != cudart.cudaError_t.cudaSuccess:
             raise RuntimeError(f"CUDA error: {err}")
+
+    def synchronize(self):
+        # Wait for all pending operations in the CUDA stream to finish.
+        # Needed for accurate inference timing during benchmarking.
+        err, = cudart.cudaStreamSynchronize(self.stream)
+        self._check(err)
+
+    def get_output(self):
+
+         # Device -> Host
+        err, = cudart.cudaMemcpyAsync(
+            self.host_output.ctypes.data, self.d_output, self.host_output.nbytes,
+            cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, self.stream,
+        ); self._check(err)
+
+        self.synchronize()
+
+        # Keep only real samples
+        outputs = self.host_output[:self.original_batch_size]
+
+        # Convert TensorRT NumPy output to PyTorch tensor
+        outputs = torch.from_numpy(outputs)
+    
+        return outputs
 
     def close(self):
         cudart.cudaFree(self.d_input)

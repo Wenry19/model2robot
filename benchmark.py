@@ -10,8 +10,8 @@ from datasets.utils import get_images_paths_and_labels
 from inference.pytorch_inference import PyTorchInference
 from inference.tensorrt_inference import TensorRTInference
 
-from evaluation.evaluator import Evaluator
-from evaluation.report import generate_report
+from benchmarking.benchmark import Benchmark
+from benchmarking.report import generate_report
 
 if __name__ == "__main__":
 
@@ -47,10 +47,11 @@ if __name__ == "__main__":
 
     ### DATALOADER ###
     test_dataloader = DataLoader(test_dataset,
-                                 batch_size=config["evaluation"]["batch_size"],
+                                 batch_size=config["benchmark"]["batch_size"],
                                  shuffle=False,
                                  num_workers=config["dataloader"]["num_workers"],
-                                 pin_memory=config["dataloader"]["pin_memory"])
+                                 pin_memory=config["dataloader"]["pin_memory"],
+                                 drop_last=True)
 
     ### INFERENCE INSTANCE ###
 
@@ -62,21 +63,19 @@ if __name__ == "__main__":
         inference = PyTorchInference(model_path, model_module, model_class, device)
     elif config["model"]["type"] == "tensorrt":
         inference = TensorRTInference(model_path,
-                                      config["evaluation"]["batch_size"],
+                                      config["benchmark"]["batch_size"],
                                       input_height,
                                       input_width)
     else:
         raise ValueError(f"Unsupported model format: {model_path}")
 
-    ### PREDICT ###
-    evaluator = Evaluator(inference)
-    labels, predictions, probabilities = evaluator.predict(test_dataloader)
+    ### BENCHMARK ###
+    benchmark = Benchmark(inference=inference,
+                          warmup_iterations=config["benchmark"]["warmup_iterations"],
+                          benchmark_iterations=config["benchmark"]["benchmark_iterations"])
+    stats, latencies = benchmark.run(test_dataloader)
+    benchmark.close()
     inference.close()
 
     ### RESULTS ###
-    generate_report(config["output_path"],
-                    config["dataset"]["class_names"],
-                    test_img_paths,
-                    labels,
-                    predictions,
-                    probabilities)
+    generate_report(config["output_path"], stats, latencies)

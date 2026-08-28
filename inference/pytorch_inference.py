@@ -24,9 +24,17 @@ class PyTorchInference(Inference):
         input_array = input_array.to(self.device)
 
         with torch.no_grad():
-            outputs = self.model(input_array)
+            self.outputs = self.model(input_array)
 
-        return outputs
+    def synchronize(self):
+        # Wait for all pending CUDA operations to finish.
+        # Needed for accurate inference timing during benchmarking.
+        if self.device.type == "cuda":
+            torch.cuda.synchronize(self.device)
+
+    def get_output(self):
+        self.synchronize()
+        return self.outputs.cpu()
 
     def close(self):
         pass

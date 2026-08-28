@@ -15,14 +15,15 @@ class Evaluator:
 
         for images, labels in dataloader:
 
-            outputs = self.inference.run(images)
+            self.inference.run(images)
+            outputs = self.inference.get_output()
 
             probabilities = torch.softmax(outputs, dim=1)
             predictions = torch.argmax(outputs, dim=1)
 
-            all_labels.extend(labels.cpu().numpy())
-            all_predictions.extend(predictions.cpu().numpy())
-            all_probabilities.extend(probabilities.cpu().numpy())
+            all_labels.extend(labels.numpy())
+            all_predictions.extend(predictions.numpy())
+            all_probabilities.extend(probabilities.numpy())
 
         return (np.asarray(all_labels),
                 np.asarray(all_predictions),
