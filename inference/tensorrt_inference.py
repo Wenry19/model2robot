@@ -109,7 +109,7 @@ class TensorRTInference(Inference):
 
     def get_output(self):
 
-         # Device -> Host
+        # Device -> Host
         err, = cudart.cudaMemcpyAsync(
             self.host_output.ctypes.data, self.d_output, self.host_output.nbytes,
             cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, self.stream,

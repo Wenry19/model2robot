@@ -1,0 +1,48 @@
+services:
+  model2robot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: model2robot:ros2-humble-gpu
+    container_name: model2robot
+
+    working_dir: /model2robot
+
+    # Use the host network so ROS2 DDS can communicate
+    # naturally with other ROS2 processes on the host/network.
+    network_mode: host
+
+    # Share the host IPC namespace.
+    ipc: host
+
+    volumes:
+      - .:/model2robot
+      - ./.bashrc:/root/.bashrc
+
+      # X11 socket for GUI applications
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+
+      # X11 display
+      - DISPLAY=${DISPLAY}
+      # Required for some Qt/X11 applications
+      - QT_X11_NO_MITSHM="1"
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+    stdin_open: true
+    tty: true
+
+# docker compose build
+# docker compose up -d
+# docker compose exec model2robot bash
+# docker compose down
