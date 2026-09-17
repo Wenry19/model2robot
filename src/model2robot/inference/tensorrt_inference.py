@@ -2,10 +2,10 @@
 import numpy as np
 import torch
 
-from inference.inference import Inference
-
 from cuda.bindings import runtime as cudart
 import tensorrt as trt
+
+from model2robot.inference.inference import Inference
 
 class TensorRTInference(Inference):
 

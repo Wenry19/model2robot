@@ -1,0 +1,9 @@
+model:
+  path: "output/train/t01/best_model.pth"
+  input_width: 224
+  input_height: 224
+
+export:
+  batch_size: 1
+
+output_path: "output/onnx/t01_bs1"

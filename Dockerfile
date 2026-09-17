@@ -38,10 +38,22 @@ RUN pip3 install --no-cache-dir \
 # Python dependencies
 # ============================================================
 
-RUN pip install --no-cache-dir \
+RUN pip3 install --no-cache-dir \
     onnx==1.12.0 \
     pandas==1.3.5 \
     pillow==10.4.0 \
     scikit-learn==1.0.2 \
     cuda-bindings==12.8.0\
     nvidia-ml-py==12.535.108
+
+# ============================================================
+# Upgrade pip
+# ============================================================
+
+RUN pip3 install --no-cache-dir --upgrade pip
+
+# ============================================================
+# Python Import Path
+# ============================================================
+
+ENV PYTHONPATH=/model2robot:${PYTHONPATH}

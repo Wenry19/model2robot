@@ -1,0 +1,19 @@
+
+dataset:
+  test_path: "data/Door-Classification/OriginalSize/RGB/test"
+  class_names: ["Closed", "Open", "Semi"]
+
+inference:
+  backend: "tensorrt"
+
+model:
+  path: "output/tensorrt/t01/best_model.engine"
+  input_width: 224
+  input_height: 224
+
+dataloader:
+  batch_size: 32
+  num_workers: 4
+  pin_memory: true
+
+output_path: "output/eval/tensorrt/t01"

@@ -2,7 +2,6 @@
 from PIL import Image
 from torch.utils.data import Dataset
 
-
 class SimpleDataset(Dataset):
 
     def __init__(self, img_paths, labels, transform=None):

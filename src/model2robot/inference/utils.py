@@ -1,11 +1,7 @@
 
-import sys
-import os
 import tensorrt as trt
 
-import utils
-
-def build_engine(onnx_path: str, engine_path: str):
+def build_tensorrt_engine(onnx_path: str, engine_path: str):
     """Build a strongly typed TensorRT engine from an ONNX file and save it."""
 
     # Creating Logger and Builder
@@ -34,20 +30,3 @@ def build_engine(onnx_path: str, engine_path: str):
         raise RuntimeError("Engine build failed")
     with open(engine_path, "wb") as f:
         f.write(serialized)
-
-if __name__ == "__main__":
-
-    ### GET READY ###
-    config_path = sys.argv[1]
-    config = utils.read_config_file(config_path)
-    utils.create_output_dir(config["output_path"])
-
-    ### FOR REPRODUCIBILITY ###
-    utils.save_config(config)
-
-    ### BUILD TENSORRT ENGINE USING PYTHON API ###
-
-    onnx_path = config["model"]["path"]
-    engine_path = os.path.join(config["output_path"],
-                               os.path.basename(onnx_path).split(".")[0] + ".engine")
-    build_engine(onnx_path, engine_path)

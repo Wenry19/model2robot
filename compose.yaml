@@ -42,7 +42,15 @@ services:
     stdin_open: true
     tty: true
 
+    command: >
+      bash -c "
+        pip3 install -e /model2robot &&
+        source /root/.bashrc &&
+        bash
+      "
+
 # docker compose build
 # docker compose up -d
+# docker compose attach model2robot
 # docker compose exec model2robot bash
 # docker compose down

@@ -1,0 +1,22 @@
+
+inference:
+  backend: "tensorrt"
+
+model:
+  path: "/model2robot/output/tensorrt/t01_bs1/best_model.engine"
+  module: "models.detectdoor"
+  class: "Detectdoor"
+  args: {}
+
+input:
+  encoding: "rgb8"
+  transform:
+    module: "datasets.transforms"
+    function: "get_default_transform"
+    args:
+      input_height: 224
+      input_width: 224
+
+  output:
+    topic: "/inference/prediction"
+    class_names: ["closed", "open", "semi"]

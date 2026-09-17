@@ -5,11 +5,14 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 
-import utils
-from datasets.utils import get_images_paths_and_labels
+import model2robot.utils as utils
+from model2robot.training.trainer import Trainer
+from model2robot.training.report import generate_report
 
-from training.trainer import Trainer
-from training.report import generate_report
+from models.detectdoor import Detectdoor
+from datasets.simple_dataset import SimpleDataset
+from datasets.transforms import get_default_transform
+from datasets.utils import get_images_paths_and_labels
 
 LOSS = {
     "CrossEntropyLoss": nn.CrossEntropyLoss,
@@ -23,7 +26,7 @@ OPTIMIZER = {
     "AdamW": torch.optim.AdamW,
 }
 
-if __name__ == "__main__":
+def main():
 
     ### GET READY ###
     device = utils.find_device()
@@ -35,8 +38,7 @@ if __name__ == "__main__":
     utils.save_config(config)
 
     ### MODEL ###
-    model = utils.instantiate_class(config["model"]["module"],
-                                    config["model"]["class"])
+    model = Detectdoor()
     model.to(device)
 
     ### LOSS FUNCTION ###
@@ -48,54 +50,38 @@ if __name__ == "__main__":
 
     ### DATASETS ###
 
-    target_path = config["dataset"]["train_path"]
-    train_img_paths, train_labels = get_images_paths_and_labels(target_path,
+    train_img_paths, train_labels = get_images_paths_and_labels(config["dataset"]["train_path"],
                                                                 config["dataset"]["class_names"])
-
-    target_path = config["dataset"]["val_path"]
-    val_img_paths, val_labels = get_images_paths_and_labels(target_path,
+    
+    val_img_paths, val_labels = get_images_paths_and_labels(config["dataset"]["val_path"],
                                                             config["dataset"]["class_names"])
 
-    input_width = config["model"]["input_width"]
-    input_height = config["model"]["input_height"]
+    transform = get_default_transform(input_height=config["model"]["input_height"],
+                                      input_width=config["model"]["input_width"])
 
-    train_transform_config = config["dataset"]["train_transform"]
-    val_transform_config = config["dataset"]["val_transform"]
-    train_transform = utils.import_function(train_transform_config["module"],
-                                            train_transform_config["function"],
-                                            **train_transform_config.get("args", {}))
-    val_transform = utils.import_function(val_transform_config["module"],
-                                          val_transform_config["function"],
-                                          **val_transform_config.get("args", {}))
-
-    train_dataset = utils.instantiate_class(config["dataset"]["module"],
-                                            config["dataset"]["class"],
-                                            img_paths=train_img_paths,
-                                            labels=train_labels,
-                                            transform=train_transform,
-                                            **config["dataset"].get("args", {}))
-    val_dataset = utils.instantiate_class(config["dataset"]["module"],
-                                          config["dataset"]["class"],
-                                          img_paths=val_img_paths,
-                                          labels=val_labels,
-                                          transform=val_transform,
-                                          **config["dataset"].get("args", {}))
+    train_dataset = SimpleDataset(img_paths=train_img_paths,
+                                  labels=train_labels,
+                                  transform=transform)
+    val_dataset = SimpleDataset(img_paths=val_img_paths,
+                                labels=val_labels,
+                                transform=transform)
     # image, label = train_dataset[0]
 
     ### DATALOADER ###
 
     train_dataloader = DataLoader(dataset=train_dataset,
-                                  batch_size=config["training"]["batch_size"],
+                                  batch_size=config["dataloader"]["batch_size"],
                                   shuffle=config["dataloader"]["shuffle"],
                                   num_workers=config["dataloader"]["num_workers"],
                                   pin_memory=config["dataloader"]["pin_memory"],
                                   drop_last=config["dataloader"]["drop_last"])
 
     val_dataloader = DataLoader(dataset=val_dataset,
-                                batch_size=config["training"]["batch_size"],
+                                batch_size=config["dataloader"]["batch_size"],
                                 shuffle=False,
                                 num_workers=config["dataloader"]["num_workers"],
-                                pin_memory=config["dataloader"]["pin_memory"])
+                                pin_memory=config["dataloader"]["pin_memory"],
+                                drop_last=False)
 
     ### TRAIN ###
     trainer = Trainer(model,
@@ -116,3 +102,6 @@ if __name__ == "__main__":
                     trainer.train_losses,
                     trainer.val_losses,
                     trainer.val_accuracies)
+
+if __name__ == "__main__":
+    main()

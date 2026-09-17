@@ -5,10 +5,11 @@ import os
 import torch
 import onnx
 
-import utils
+import model2robot.utils as utils
 
-if __name__ == "__main__":
+from models.detectdoor import Detectdoor
 
+def main():
     ### GET READY ###
     config_path = sys.argv[1]
     config = utils.read_config_file(config_path)
@@ -27,12 +28,11 @@ if __name__ == "__main__":
                             config["model"]["input_width"])
 
     ### LOAD PYTORCH MODEL TO BE EXPORTED ###
-    checkpoint = torch.load(config["model"]["path"],
+    model_info = torch.load(config["model"]["path"],
                             map_location="cpu",
                             weights_only=True)
-    model = utils.instantiate_class(config["model"]["module"],
-                                    config["model"]["class"])
-    model.load_state_dict(checkpoint["model_state_dict"])
+    model = Detectdoor()
+    model.load_state_dict(model_info["model_state_dict"])
     model.eval() # IMPORTANT!
 
     ### EXPORT TO ONNX ###
@@ -53,3 +53,7 @@ if __name__ == "__main__":
     except onnx.checker.ValidationError as e:
         print("ONNX model validation failed:")
         print(e)
+
+if __name__ == "__main__":
+    main()
+

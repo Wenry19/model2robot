@@ -1,22 +1,20 @@
 
 import torch
 
-from inference.inference import Inference
-from utils import instantiate_class
+from model2robot.inference.inference import Inference
 
 class PyTorchInference(Inference):
 
-    def __init__(self, checkpoint_path, model_module, model_class, device):
+    def __init__(self, model_path, model_instance, device):
 
+        self.model = model_instance
         self.device = device
 
-        checkpoint = torch.load(checkpoint_path,
-                                map_location=device,
+        model_info = torch.load(model_path,
+                                map_location=self.device,
                                 weights_only=True)
 
-        self.model = instantiate_class(model_module,
-                                       model_class).to(self.device)
-        self.model.load_state_dict(checkpoint["model_state_dict"])
+        self.model.load_state_dict(model_info["model_state_dict"])
         self.model.eval()
 
     def run(self, input_array):
