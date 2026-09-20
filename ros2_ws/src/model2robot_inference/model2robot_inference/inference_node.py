@@ -2,9 +2,11 @@
 
 import rclpy
 from rclpy.node import Node
+from cv_bridge import CvBridge
 
 from sensor_msgs.msg import Image
-from cv_bridge import CvBridge
+from model2robot_msgs.msg import Prediction
+
 
 import torch
 from PIL import Image as PILImage
@@ -54,12 +56,18 @@ class InferenceNode(Node):
                                               self.config["input"]["transform"]["function"],
                                               **self.config["input"]["transform"].get("args", {}))
 
-        #### SUBSCRIBER  ####
+        #### SUBSCRIBER ####
 
         self.image_sub = self.create_subscription(Image,
                                                   "/image",
                                                   self.image_callback,
                                                   10)
+
+        #### PUBLISHER ####
+
+        self.predict_pub = self.create_publisher(Prediction,
+                                                 self.config["output"]["topic"],
+                                                 10)
 
         self.bridge = CvBridge()
 
@@ -76,12 +84,17 @@ class InferenceNode(Node):
         outputs = self.inference.get_output()
 
         probabilities = torch.softmax(outputs, dim=1)
-        predictions = torch.argmax(outputs, dim=1)
+        prediction = torch.argmax(outputs, dim=1)[0]
+        confidence = probabilities[0, prediction]
 
-        self.get_logger().info("probabilities: " + str(probabilities))
-        self.get_logger().info("predictions: " + str(predictions) + "\n")
+        class_id = int(prediction)
+        
+        msg = Prediction()
+        msg.class_id = class_id
+        msg.class_name = self.config["output"]["class_names"][class_id]
+        msg.confidence = float(confidence)
 
-        # TODO: send message with prediction
+        self.predict_pub.publish(msg)
 
     def preprocess_image(self, img: Image):
 

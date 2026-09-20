@@ -8,12 +8,10 @@
   <license>Apache-2.0</license>
 
   <depend>rclpy</depend>
+  <depend>model2robot_msgs</depend>
   <depend>cv_bridge</depend>
   <depend>sensor_msgs</depend>
   <depend>model2robot</depend>
-  <depend>torch</depend>
-  <depend>pillow</depend>
-  <depend>importlib</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
