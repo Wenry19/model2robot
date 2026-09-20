@@ -1,6 +1,7 @@
 
 import sys
 import os
+from datetime import datetime, timezone
 
 import torch
 import onnx
@@ -10,6 +11,9 @@ import model2robot.utils as utils
 from models.detectdoor import Detectdoor
 
 def main():
+
+    started_at = datetime.now(timezone.utc)
+
     ### GET READY ###
     config_path = sys.argv[1]
     config = utils.read_config_file(config_path)
@@ -53,6 +57,17 @@ def main():
     except onnx.checker.ValidationError as e:
         print("ONNX model validation failed:")
         print(e)
+
+    finished_at = datetime.now(timezone.utc)
+
+    ### EXPERIMENT MANIFEST ###
+    
+    utils.generate_experiment_manifest(started_at=started_at,
+                                       finished_at=finished_at,
+                                       input_artifact_path=os.path.dirname(config["model"]["path"]),
+                                       output_artifact_path=config["output_path"],
+                                       experiment_type="export_to_onnx",
+                                       output_manifest_path=config["manifest_path"])
 
 if __name__ == "__main__":
     main()

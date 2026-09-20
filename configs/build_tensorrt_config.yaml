@@ -1,4 +1,5 @@
 model:
-  path: "output/onnx/t01_bs1/best_model.onnx"
+  path: "output/onnx/t01/best_model.onnx"
 
-output_path: "output/tensorrt/t01_bs1"
+output_path: "output/tensorrt/t01"
+manifest_path: "output/manifests"

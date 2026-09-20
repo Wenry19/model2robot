@@ -1,12 +1,14 @@
 
+import os
 import sys
+from datetime import datetime, timezone
 
 from torch.utils.data import DataLoader
 
 from model2robot.inference.pytorch_inference import PyTorchInference
 from model2robot.inference.tensorrt_inference import TensorRTInference
 
-from model2robot.benchmarking.benchmark import Benchmark
+from model2robot.benchmarking.benchmarker import Benchmarker
 from model2robot.benchmarking.report import generate_report
 
 import model2robot.utils as utils
@@ -17,6 +19,8 @@ from datasets.transforms import get_default_transform
 from datasets.utils import get_images_paths_and_labels
 
 def main():
+
+    started_at = datetime.now(timezone.utc)
 
     ### GET READY ###
     device = utils.find_device()
@@ -64,7 +68,7 @@ def main():
         raise ValueError(f"Unsupported backend: {config['inference']['backend']}")
 
     ### BENCHMARK ###
-    benchmark = Benchmark(inference=inference,
+    benchmark = Benchmarker(inference=inference,
                           warmup_iterations=config["benchmark"]["warmup_iterations"],
                           benchmark_iterations=config["benchmark"]["benchmark_iterations"])
     stats, latencies = benchmark.run(test_dataloader)
@@ -73,6 +77,17 @@ def main():
 
     ### RESULTS ###
     generate_report(config["output_path"], stats, latencies)
+
+    finished_at = datetime.now(timezone.utc)
+        
+    ### EXPERIMENT MANIFEST ###
+    
+    utils.generate_experiment_manifest(started_at=started_at,
+                                       finished_at=finished_at,
+                                       input_artifact_path=os.path.dirname(config["model"]["path"]),
+                                       output_artifact_path=config["output_path"],
+                                       experiment_type="benchmarking",
+                                       output_manifest_path=config["manifest_path"])
 
 if __name__ == "__main__":
     main()

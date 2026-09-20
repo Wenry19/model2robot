@@ -1,5 +1,7 @@
 
+import os
 import sys
+from datetime import datetime, timezone
 
 from torch.utils.data import DataLoader
 
@@ -17,6 +19,8 @@ from datasets.transforms import get_default_transform
 from datasets.utils import get_images_paths_and_labels
 
 def main():
+
+    started_at = datetime.now(timezone.utc)
 
     ### GET READY ###
     device = utils.find_device()
@@ -75,6 +79,18 @@ def main():
                     labels,
                     predictions,
                     probabilities)
+
+    finished_at = datetime.now(timezone.utc)
+    
+    ### EXPERIMENT MANIFEST ###
+    
+    utils.generate_experiment_manifest(started_at=started_at,
+                                       finished_at=finished_at,
+                                       input_artifact_path=os.path.dirname(config["model"]["path"]),
+                                       output_artifact_path=config["output_path"],
+                                       experiment_type="evaluation",
+                                       output_manifest_path=config["manifest_path"])
+    
 
 
 if __name__ == "__main__":

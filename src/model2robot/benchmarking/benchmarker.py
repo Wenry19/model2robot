@@ -5,7 +5,7 @@ import numpy as np
 import os
 import pynvml
 
-class Benchmark:
+class Benchmarker:
 
     def __init__(self, inference, warmup_iterations, benchmark_iterations):
 

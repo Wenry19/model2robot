@@ -44,6 +44,7 @@ services:
 
     command: >
       bash -c "
+        git config --global --add safe.directory /model2robot &&
         pip3 install -e /model2robot &&
         source /root/.bashrc &&
         bash

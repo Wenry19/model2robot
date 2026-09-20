@@ -1,5 +1,6 @@
 
 import sys
+from datetime import datetime, timezone
 
 import torch
 import torch.nn as nn
@@ -27,6 +28,8 @@ OPTIMIZER = {
 }
 
 def main():
+
+    started_at = datetime.now(timezone.utc)
 
     ### GET READY ###
     device = utils.find_device()
@@ -102,6 +105,16 @@ def main():
                     trainer.train_losses,
                     trainer.val_losses,
                     trainer.val_accuracies)
+
+    finished_at = datetime.now(timezone.utc)
+
+    ### EXPERIMENT MANIFEST ###
+    utils.generate_experiment_manifest(started_at=started_at,
+                                       finished_at=finished_at,
+                                       input_artifact_path=None,
+                                       output_artifact_path=config["output_path"],
+                                       experiment_type="training",
+                                       output_manifest_path=config["manifest_path"])
 
 if __name__ == "__main__":
     main()

@@ -22,3 +22,4 @@ benchmark:
   benchmark_iterations: 100
 
 output_path: "output/benchmark/tensorrt/t01"
+manifest_path: "output/manifests"

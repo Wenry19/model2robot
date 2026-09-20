@@ -22,3 +22,4 @@ dataloader:
 
 seed: 1234
 output_path: "output/train/t01"
+manifest_path: "output/manifests"

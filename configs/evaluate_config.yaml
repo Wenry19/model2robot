@@ -17,3 +17,4 @@ dataloader:
   pin_memory: true
 
 output_path: "output/eval/tensorrt/t01"
+manifest_path: "output/manifests"
