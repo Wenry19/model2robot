@@ -6,12 +6,30 @@ import os
 import subprocess
 from pathlib import Path
 import hashlib
+import random
+import numpy as np
 
 def find_device():
     device = torch.device(
         "cuda" if torch.cuda.is_available() else "cpu")
     print("DEVICE:", device)
     return device
+
+def set_seed(seed):
+
+    if seed is None:
+        return
+
+    random.seed(seed)
+    np.random.seed(seed)
+
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+
+    # Make CUDA deterministic
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
 def create_output_dir(output_path):
     if not os.path.exists(output_path):
@@ -33,6 +51,15 @@ def save_config(config):
 
 def make_file_only_read(filepath):
     os.chmod(filepath, 0o444)
+
+def make_directory_only_read(directory):
+    directory = Path(directory)
+    for path in directory.rglob("*"):
+        if path.is_file():
+            make_file_only_read(path)
+        elif path.is_dir():
+            os.chmod(path, 0o555)
+    os.chmod(directory, 0o555)
 
 def get_git_info():
     commit = subprocess.check_output(

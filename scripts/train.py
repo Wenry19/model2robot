@@ -39,6 +39,7 @@ def main():
 
     ### FOR REPRODUCIBILITY ###
     utils.save_config(config)
+    utils.set_seed(config["seed"])
 
     ### MODEL ###
     model = Detectdoor()
@@ -93,8 +94,7 @@ def main():
                       device,
                       loss_func,
                       optimizer,
-                      config["output_path"],
-                      config["seed"])
+                      config["output_path"])
 
     trainer.train(config["training"]["epochs"])
 
@@ -105,6 +105,8 @@ def main():
                     trainer.train_losses,
                     trainer.val_losses,
                     trainer.val_accuracies)
+
+    utils.make_directory_only_read(config["output_path"])
 
     finished_at = datetime.now(timezone.utc)
 

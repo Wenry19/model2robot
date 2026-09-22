@@ -14,8 +14,7 @@ class Trainer:
                  device,
                  loss_func,
                  optimizer,
-                 output_path,
-                 seed=None):
+                 output_path):
 
         self.model = model
         self.train_dataloader = train_dataloader
@@ -31,24 +30,6 @@ class Trainer:
         self.timestamps = []
 
         self.best_val_loss = None
-
-        self.set_seed(seed)
-
-    def set_seed(self, seed):
-
-        if seed is None:
-            return
-
-        random.seed(seed)
-        np.random.seed(seed)
-
-        torch.manual_seed(seed)
-        torch.cuda.manual_seed(seed)
-        torch.cuda.manual_seed_all(seed)
-
-        # Make CUDA deterministic
-        torch.backends.cudnn.deterministic = True
-        torch.backends.cudnn.benchmark = False
 
     def train_one_epoch(self):
 

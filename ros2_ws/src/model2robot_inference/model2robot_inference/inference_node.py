@@ -129,6 +129,10 @@ class InferenceNode(Node):
 
         return function(**kwargs)
 
+    def close_inference(self):
+        if self.inference is not None:
+            self.inference.close()
+
 def main(args=None):
 
     # initialize ROS2 communications
@@ -138,6 +142,7 @@ def main(args=None):
     # in order to keep the node alive, so it can execute the callbacks
     rclpy.spin(node)
 
+    node.close_inference()
     # shutdown ROS2 communications
     rclpy.shutdown()
 

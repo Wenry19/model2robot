@@ -25,6 +25,8 @@ def main():
                                os.path.basename(onnx_path).split(".")[0] + ".engine")
     build_tensorrt_engine(onnx_path, engine_path)
 
+    utils.make_directory_only_read(config["output_path"])
+
     finished_at = datetime.now(timezone.utc)
 
     ### EXPERIMENT MANIFEST ###

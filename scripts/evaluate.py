@@ -80,6 +80,8 @@ def main():
                     predictions,
                     probabilities)
 
+    utils.make_directory_only_read(config["output_path"])
+
     finished_at = datetime.now(timezone.utc)
     
     ### EXPERIMENT MANIFEST ###

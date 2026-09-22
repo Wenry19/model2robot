@@ -58,6 +58,8 @@ def main():
         print("ONNX model validation failed:")
         print(e)
 
+    utils.make_directory_only_read(config["output_path"])
+
     finished_at = datetime.now(timezone.utc)
 
     ### EXPERIMENT MANIFEST ###
