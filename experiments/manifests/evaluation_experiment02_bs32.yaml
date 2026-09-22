@@ -1,0 +1,11 @@
+experiment:
+  type: evaluation
+  started_at: 2026-09-22 09:55:53.245968+00:00
+  finished_at: 2026-09-22 09:55:55.988834+00:00
+git:
+  commit: 564fe6e557e03536ed2c5528dee2a1fcc071b672
+  commit_short: 564fe6e
+  dirty: false
+artifacts:
+  input-sha256: 3c25ac33e068f636957a61e2b5b220693e39c20fcc6a246683fcab92da61b911
+  output-sha256: cc1954347e0326ca92e3479c18bcde64f239ef52a55e02b7460946ee80521379

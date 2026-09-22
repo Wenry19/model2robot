@@ -1,0 +1,24 @@
+dataset:
+  train_path: data/Door-Classification/OriginalSize/RGB/train
+  val_path: data/Door-Classification/OriginalSize/RGB/val
+  class_names:
+  - Closed
+  - Open
+  - Semi
+model:
+  input_width: 224
+  input_height: 224
+training:
+  epochs: 50
+  learning_rate: 5.0e-05
+  optimizer: Adam
+  loss: CrossEntropyLoss
+dataloader:
+  batch_size: 32
+  shuffle: true
+  num_workers: 4
+  pin_memory: true
+  drop_last: false
+seed: 1234
+output_path: experiments/train/pytorch/experiment02
+manifest_path: experiments/manifests

@@ -1,0 +1,30 @@
+Evaluation Results
+============================
+
+Accuracy: 0.7500
+
+Per-class metrics:
+------------------
+Closed:
+  Precision: 0.7600
+  Recall:    0.9500
+  F1-score:  0.8444
+  Support:   20
+
+Open:
+  Precision: 0.6800
+  Recall:    0.8500
+  F1-score:  0.7556
+  Support:   20
+
+Semi:
+  Precision: 0.9000
+  Recall:    0.4500
+  F1-score:  0.6000
+  Support:   20
+
+Macro averages:
+---------------
+Precision: 0.7800
+Recall:    0.7500
+F1-score:  0.7333

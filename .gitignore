@@ -219,8 +219,7 @@ __marimo__/
 
 # From project
 data
-experiments
-.vscode
 ros2_ws/build
 ros2_ws/install
 ros2_ws/log
+.vscode

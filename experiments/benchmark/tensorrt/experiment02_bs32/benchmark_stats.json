@@ -1,0 +1,12 @@
+{
+    "first_inference_latency": 0.042280813000616035,
+    "mean_latency": 0.036581950359868644,
+    "median_latency": 0.03657504350030649,
+    "std_latency": 3.641416242558359e-05,
+    "min_latency": 0.036531539999486995,
+    "max_latency": 0.036718011999255395,
+    "throughput": 874.7483303980653,
+    "gpu_memory_baseline_mib": 0.0,
+    "gpu_memory_peak_mib": 0.0,
+    "gpu_memory_additional_mib": 0.0
+}

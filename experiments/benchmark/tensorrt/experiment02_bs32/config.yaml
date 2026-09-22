@@ -1,0 +1,22 @@
+dataset:
+  test_path: data/Door-Classification/OriginalSize/RGB/test
+  class_names:
+  - Closed
+  - Open
+  - Semi
+inference:
+  backend: tensorrt
+model:
+  path: experiments/tensorrt/experiment02_bs32/best_model.engine
+  input_width: 224
+  input_height: 224
+dataloader:
+  batch_size: 32
+  num_workers: 4
+  pin_memory: true
+benchmark:
+  batch_size: 32
+  warmup_iterations: 5
+  benchmark_iterations: 100
+output_path: experiments/benchmark/tensorrt/experiment02_bs32
+manifest_path: experiments/manifests

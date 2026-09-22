@@ -1,0 +1,8 @@
+model:
+  path: experiments/train/pytorch/experiment02/best_model.pth
+  input_width: 224
+  input_height: 224
+export:
+  batch_size: 32
+output_path: experiments/onnx/experiment02_bs32
+manifest_path: experiments/manifests

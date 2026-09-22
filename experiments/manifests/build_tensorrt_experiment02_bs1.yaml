@@ -1,0 +1,11 @@
+experiment:
+  type: build_tensorrt
+  started_at: 2026-09-22 09:51:25.490485+00:00
+  finished_at: 2026-09-22 09:51:32.298461+00:00
+git:
+  commit: 564fe6e557e03536ed2c5528dee2a1fcc071b672
+  commit_short: 564fe6e
+  dirty: false
+artifacts:
+  input-sha256: 0f207bf19fb29c9c917326d259d757a995d6267723b096c1626aa4e0a65d97ce
+  output-sha256: 8cceccbdcbf326303976c03b2e9921cfe6dff2fba4b60fd6d498079c5c829fa3

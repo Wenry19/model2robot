@@ -1,0 +1,4 @@
+model:
+  path: experiments/onnx/experiment02_bs1/best_model.onnx
+output_path: experiments/tensorrt/experiment02_bs1
+manifest_path: experiments/manifests

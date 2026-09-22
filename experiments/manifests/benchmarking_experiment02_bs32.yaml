@@ -1,0 +1,11 @@
+experiment:
+  type: benchmarking
+  started_at: 2026-09-22 10:09:46.961681+00:00
+  finished_at: 2026-09-22 10:10:30.593567+00:00
+git:
+  commit: 564fe6e557e03536ed2c5528dee2a1fcc071b672
+  commit_short: 564fe6e
+  dirty: false
+artifacts:
+  input-sha256: 3c25ac33e068f636957a61e2b5b220693e39c20fcc6a246683fcab92da61b911
+  output-sha256: b98fc9be1fb42afdcfdadb240ea649257e57d3879a59a6417f7a1928289c36ed

@@ -1,0 +1,11 @@
+experiment:
+  type: export_to_onnx
+  started_at: 2026-09-22 09:46:20.016928+00:00
+  finished_at: 2026-09-22 09:46:20.230406+00:00
+git:
+  commit: 564fe6e557e03536ed2c5528dee2a1fcc071b672
+  commit_short: 564fe6e
+  dirty: false
+artifacts:
+  input-sha256: 0af5f3292195512689893c971cd1b0bbed4d41b052fe2a047b2b43fe742fccc9
+  output-sha256: 0f207bf19fb29c9c917326d259d757a995d6267723b096c1626aa4e0a65d97ce
