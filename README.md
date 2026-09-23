@@ -239,7 +239,7 @@ Below there is a comparative table of PyTorch and TensorRT inference.
 
 The results show a clear improvement in inference performance when using TensorRT. Mean latency is reduced from **79.00 ms to 36.57 ms**, while throughput increases from **405.08 to 874.92 samples/s**, providing more than a 2× improvement in throughput. TensorRT also shows much more consistent inference times, with a latency standard deviation of only **0.05 ms** compared to **2.83 ms** with PyTorch. The first inference is also significantly faster with TensorRT, decreasing from **352.80 ms to 55.72 ms**. On the other hand, the memory measurements show that PyTorch increases GPU memory usage by approximately **930 MiB** during inference, while TensorRT remains at its baseline of approximately **1003 MiB**. This stable memory usage with TensorRT is achieved by allocating reusable input and output buffers directly on the GPU, which avoids repeated memory allocations during inference. Overall, these results demonstrate the benefits of converting the trained model to a TensorRT engine for low-latency and high-throughput inference.
 
-## ROS2 Deployment
+### 7. ROS2 Deployment
 
 Now that we have the TensorRT engine ready, the next step is to deploy it within a ROS2 system.
 
@@ -250,7 +250,7 @@ For this, I created two ROS2 packages:
 
 This separation allows the inference node and prediction message to be used independently.
 
-### Building the ROS2 packages
+#### Building the ROS2 packages
 
 From `ros2_ws/`, build the ROS2 workspace with:
 
@@ -267,7 +267,7 @@ colcon build --symlink-install
 source /root/.bashrc
 ```
 
-### Inference node
+#### Inference node
 
 The inference node follows a simple pipeline:
 
@@ -290,7 +290,7 @@ float32 confidence
 
 > **Important:** Remember to build the TensorRT engine with a batch size of `1` so that it can perform inference on individual images!
 
-### Running the ROS2 experiment
+#### Running the ROS2 experiment
 
 The following image shows the complete ROS2 inference pipeline running with a webcam:
 
@@ -300,13 +300,13 @@ The following image shows the complete ROS2 inference pipeline running with a we
 
 To reproduce the experiment:
 
-#### 1. Run the inference node
+**1. Run the inference node**
 
 ```bash
 ros2 run model2robot_inference inference_node --ros-args -p config_path:="/path/to/config"
 ```
 
-#### 2. Run the camera node
+**2. Run the camera node**
 
 The `cam2image` node from the `image_tools` package can be used to publish images from a connected camera:
 
@@ -316,7 +316,7 @@ ros2 run image_tools cam2image
 
 > **Note:** When running inside Docker, make sure the required devices and volumes are shared with the container so that it can access the camera. For this experiment, I used my computer's webcam.
 
-#### 3. Display the camera images
+**3. Display the camera images**
 
 The `showimage` node subscribes to the `/image` topic and displays the received images in real time:
 
@@ -326,7 +326,7 @@ ros2 run image_tools showimage
 
 > **Note:** Depending on the camera and image encoding, the displayed image may appear with the RGB channels reversed. The important part is to ensure that the channel order used during preprocessing in the inference node matches the channel order used when training the model. The expected channel order can be configured in the inference configuration file.
 
-#### 4. Visualize the ROS2 graph
+**4. Visualize the ROS2 graph**
 
 To visualize the nodes and topics:
 
@@ -334,7 +334,7 @@ To visualize the nodes and topics:
 rqt_graph
 ```
 
-#### 5. Inspect the predictions
+**5. Inspect the predictions**
 
 You can directly subscribe to the `/inference/prediction` topic using `ros2 topic echo`. This is useful for debugging without having to create an additional ROS2 node.
 
