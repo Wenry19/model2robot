@@ -8,7 +8,7 @@ import onnx
 
 import model2robot.utils as utils
 
-from models.detectdoor import Detectdoor
+from models.classificadoor import Classificadoor
 
 def main():
 
@@ -35,7 +35,7 @@ def main():
     model_info = torch.load(config["model"]["path"],
                             map_location="cpu",
                             weights_only=True)
-    model = Detectdoor()
+    model = Classificadoor()
     model.load_state_dict(model_info["model_state_dict"])
     model.eval() # IMPORTANT!
 

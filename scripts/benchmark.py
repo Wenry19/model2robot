@@ -13,7 +13,7 @@ from model2robot.benchmarking.report import generate_report
 
 import model2robot.utils as utils
 
-from models.detectdoor import Detectdoor
+from models.classificadoor import Classificadoor
 from datasets.simple_dataset import SimpleDataset
 from datasets.transforms import get_default_transform
 from datasets.utils import get_images_paths_and_labels
@@ -54,7 +54,7 @@ def main():
     ### INFERENCE INSTANCE ###
 
     if config["inference"]["backend"] == "pytorch":
-        model_instance = Detectdoor()
+        model_instance = Classificadoor()
         model_instance.to(device)
         inference = PyTorchInference(model_path=config["model"]["path"],
                                      model_instance=model_instance,
@@ -69,8 +69,8 @@ def main():
 
     ### BENCHMARK ###
     benchmark = Benchmarker(inference=inference,
-                          warmup_iterations=config["benchmark"]["warmup_iterations"],
-                          benchmark_iterations=config["benchmark"]["benchmark_iterations"])
+                            warmup_iterations=config["benchmark"]["warmup_iterations"],
+                            benchmark_iterations=config["benchmark"]["benchmark_iterations"])
     stats, latencies = benchmark.run(test_dataloader)
     benchmark.close()
     inference.close()

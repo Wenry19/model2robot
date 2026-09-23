@@ -24,7 +24,7 @@ class Benchmarker:
         if not dataloader.drop_last:
             raise ValueError("Benchmark requires DataLoader with drop_last=True.")
 
-        baseline_memory = self._get_process_gpu_memory()
+        baseline_memory = self._get_gpu_memory()
         peak_memory = baseline_memory
 
         # Warm-up
@@ -55,7 +55,7 @@ class Benchmarker:
 
             latencies.append(end - start)
 
-            current_memory = self._get_process_gpu_memory()
+            current_memory = self._get_gpu_memory()
             peak_memory = max(peak_memory, current_memory)
 
             if len(latencies) >= self.benchmark_iterations:
@@ -90,22 +90,12 @@ class Benchmarker:
             "gpu_memory_additional_mib": self._bytes_to_mib(peak_memory - baseline_memory),
         }, latencies
 
-    def _get_process_gpu_memory(self):
-
-        pid = os.getpid()
-
+    def _get_gpu_memory(self):
         try:
-            processes = pynvml.nvmlDeviceGetComputeRunningProcesses(
-                self.gpu_handle
-            )
-        except pynvml.NVMLError:
-            return 0
-
-        for process in processes:
-            if process.pid == pid:
-                return process.usedGpuMemory
-
-        return 0
+            memory_info = pynvml.nvmlDeviceGetMemoryInfo(self.gpu_handle)
+        except pynvml.NVMLError as e:
+            raise RuntimeError("Failed to retrieve GPU memory usage.") from e
+        return memory_info.used
 
     def _bytes_to_mib(self, value):
         return value / (1024 ** 2)

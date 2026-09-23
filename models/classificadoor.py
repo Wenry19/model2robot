@@ -5,7 +5,7 @@ import torch.nn as nn
 from models.conv_block import ConvBlock
 from models.res_block import ResBlock
 
-class Detectdoor(torch.nn.Module):
+class Classificadoor(torch.nn.Module):
 
     def __init__(self, debug=False):
         super().__init__()
@@ -58,7 +58,7 @@ class Detectdoor(torch.nn.Module):
 
 if __name__ == "__main__":
 
-    classifier = Detectdoor(debug=True)
+    classifier = Classificadoor(debug=True)
 
     x = torch.randn(1, 3, 224, 224)
 

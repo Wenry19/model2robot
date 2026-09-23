@@ -10,7 +10,7 @@ import model2robot.utils as utils
 from model2robot.training.trainer import Trainer
 from model2robot.training.report import generate_report
 
-from models.detectdoor import Detectdoor
+from models.classificadoor import Classificadoor
 from datasets.simple_dataset import SimpleDataset
 from datasets.transforms import get_default_transform
 from datasets.utils import get_images_paths_and_labels
@@ -42,7 +42,7 @@ def main():
     utils.set_seed(config["seed"])
 
     ### MODEL ###
-    model = Detectdoor()
+    model = Classificadoor()
     model.to(device)
 
     ### LOSS FUNCTION ###

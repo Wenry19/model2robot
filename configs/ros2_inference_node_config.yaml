@@ -4,8 +4,8 @@ inference:
 
 model:
   path: "/model2robot/output/tensorrt/t01/best_model.engine"
-  module: "models.detectdoor"
-  class: "Detectdoor"
+  module: "models.classificadoor"
+  class: "Classificadoor"
   args: {}
 
 input:
