@@ -223,5 +223,3 @@ ros2_ws/build
 ros2_ws/install
 ros2_ws/log
 .vscode
-experiments/benchmark
-experiments/manifests/benchmark*
